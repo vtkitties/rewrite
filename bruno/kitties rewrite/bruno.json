@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "kitties rewrite",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"kitties/db"
+	"kitties/handlers"
+	"kitties/orm"
 	"log"
 	"net/http"
 	"os"
@@ -19,25 +20,35 @@ func check_die(err error) {
 }
 
 func main() {
-	gormDB, err := db.Init(":memory:")
+	gormDB, err := orm.Init(":memory:")
 
 	addr := "localhost:3333"
 	log.Printf("serving on %v\n", addr)
 	check_die(err)
+	initJWT()
 
 	// routing setup
-	initJWT()
 	r := chi.NewRouter()
-	r.Use(db.MiddlewareWithDB(gormDB))
-	r.Use(jwtauth.Verifier(tokenAuth))
-	r.Use(jwtauth.Authenticator(tokenAuth))
-	r.Get("/admin", func(w http.ResponseWriter, r *http.Request) {
-		_, claims, _ := jwtauth.FromContext(r.Context())
-		userID := claims["user_id"]
-		fmt.Fprintf(w, "Hello protected user %v", userID)
+	r.Use(orm.MiddlewareWithDB(gormDB))
+	// public auth
+	r.Route("/api/auth", func(r chi.Router) {
+		r.Post("/login", handlers.Login(tokenAuth))
+		r.Post("/register", handlers.Register(tokenAuth))
+		r.Post("/refresh", handlers.Refresh(tokenAuth))
 	})
+	// protected routes
+	r.Group(func(r chi.Router) {
+		r.Use(jwtauth.Verifier(tokenAuth))
+		r.Use(jwtauth.Authenticator(tokenAuth))
+
+		r.Get("/admin", func(w http.ResponseWriter, r *http.Request) {
+			_, claims, _ := jwtauth.FromContext(r.Context())
+			fmt.Fprintf(w, "Hello user %v", claims["user_id"])
+		})
+	})
+
 	r.Get("/test", func(w http.ResponseWriter, r *http.Request) {
-		db := r.Context().Value(db.DBContextKey).(*gorm.DB)
+		db := r.Context().Value(orm.DBContextKey).(*gorm.DB)
 
 		var count int64
 		db.Raw("SELECT count(*) FROM sqlite_master").Scan(&count)
@@ -54,7 +65,8 @@ var tokenAuth *jwtauth.JWTAuth
 func initJWT() {
 	secret := os.Getenv("JWT_SECRET")
 	if secret == "" {
-		panic("the JWT_SECRET env var is not set")
+		// panic("the JWT_SECRET env var is not set")
+		secret = "asdf" // TEMP
 	}
 	tokenAuth = jwtauth.New("HS256", []byte(secret), nil)
 

@@ -1,0 +1,23 @@
+meta {
+  name: refresh
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{host}}/api/auth/refresh
+  body: none
+  auth: inherit
+}
+
+body:json {
+  {
+    "username": "asdnjf",
+    "password": "pass"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

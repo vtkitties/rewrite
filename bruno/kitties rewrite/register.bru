@@ -1,0 +1,23 @@
+meta {
+  name: register
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{host}}/api/auth/login
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "username": "me",
+    "password": "pass"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

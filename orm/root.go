@@ -1,4 +1,4 @@
-package db
+package orm
 
 import (
 	"context"
@@ -13,7 +13,14 @@ type ctxKeyDB struct{}
 var DBContextKey = &ctxKeyDB{}
 
 func Init(dsn string) (*gorm.DB, error) {
-	return gorm.Open(sqlite.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{})
+	if err != nil {
+		return nil, err
+	}
+	if err = db.AutoMigrate(&User{}); err != nil {
+		return nil, err
+	}
+	return db, nil
 }
 
 func MiddlewareWithDB(db *gorm.DB) func(http.Handler) http.Handler {
@@ -23,4 +30,11 @@ func MiddlewareWithDB(db *gorm.DB) func(http.Handler) http.Handler {
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}
+}
+
+// todo move to models.go
+type User struct {
+	ID       uint   `gorm:"primaryKey"`
+	Username string `gorm:"uniqueIndex"`
+	Password string
 }
