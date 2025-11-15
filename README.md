@@ -1,4 +1,6 @@
 # repo structure
+[read the mvp statement here](https://github.com/vtkitties/rewrite/blob/main/doc.md)
+
 you run, build, and test everything through a makefile
 
 pls do NOT use chatgippity to genuinely make code beyong human comprehension
