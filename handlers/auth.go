@@ -12,7 +12,7 @@ import (
 )
 
 type AuthRequest struct {
-	Username string `json:"username"`
+	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
@@ -33,7 +33,7 @@ func Login(tokenAuth *jwtauth.JWTAuth) http.HandlerFunc {
 		}
 
 		var user orm.User
-		if err := db.Where("username = ?", req.Username).First(&user).Error; err != nil {
+		if err := db.Where("email = ?", req.Email).First(&user).Error; err != nil {
 			http.Error(w, `{"error":"invalid credentials"}`, http.StatusUnauthorized)
 			return
 		}
@@ -74,9 +74,9 @@ func Register(tokenAuth *jwtauth.JWTAuth) http.HandlerFunc {
 			return
 		}
 
-		user := orm.User{Username: req.Username, Password: string(hashed)}
+		user := orm.User{Email: req.Email, Password: string(hashed)}
 		if err := db.Create(&user).Error; err != nil {
-			http.Error(w, `{"error":"username already exists"}`, http.StatusBadRequest)
+			http.Error(w, `{"error":"email already exists"}`, http.StatusBadRequest)
 			return
 		}
 

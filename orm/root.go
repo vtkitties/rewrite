@@ -17,9 +17,17 @@ func Init(dsn string) (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	if err = db.AutoMigrate(&User{}); err != nil {
+	if err = AutoMigrate(db); err != nil {
 		return nil, err
 	}
+	if err = db.Exec(`
+		CREATE UNIQUE INDEX IF NOT EXISTS idx_vote_user_unique 
+		ON vote_results (vote_id, user_id) 
+		WHERE user_id IS NOT NULL;
+	`).Error; err != nil {
+		return nil, err
+	}
+
 	return db, nil
 }
 
@@ -32,9 +40,11 @@ func MiddlewareWithDB(db *gorm.DB) func(http.Handler) http.Handler {
 	}
 }
 
-// todo move to models.go
-type User struct {
-	ID       uint   `gorm:"primaryKey"`
-	Username string `gorm:"uniqueIndex"`
-	Password string
+func AutoMigrate(db *gorm.DB) error {
+	return db.AutoMigrate(
+		&User{},
+		&Vote{},
+		&VoteOption{},
+		&VoteResult{},
+	)
 }

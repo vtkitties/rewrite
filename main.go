@@ -70,6 +70,6 @@ func initJWT() {
 	}
 	tokenAuth = jwtauth.New("HS256", []byte(secret), nil)
 
-	_, tokenString, _ := tokenAuth.Encode(map[string]any{"user": 123})
-	fmt.Printf("DEBUG: a sample JWT is %s\n", tokenString)
+	// _, tokenString, _ := tokenAuth.Encode(map[string]any{"user": 123})
+	// fmt.Printf("DEBUG: a sample JWT is %s\n", tokenString)
 }
