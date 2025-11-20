@@ -7,7 +7,7 @@ import (
 type Vote struct {
 	gorm.Model
 	Title       string
-	Description string     `gorm:"type:text"`
+	Description string `gorm:"type:text"`
 	CreatedByID uint
 	IsAnonymous bool
 	IsOpen      bool `gorm:"default:true"`
@@ -18,13 +18,13 @@ type Vote struct {
 
 type VoteOption struct {
 	gorm.Model
-	VoteID uint   `gorm:"index"`
+	VoteID uint `gorm:"index"`
 	Text   string
 }
 
 type VoteResult struct {
 	gorm.Model
-	VoteID   uint      `gorm:"index"`
-	OptionID uint      `gorm:"index"`
-	UserID   *uint     `gorm:"index"` // NULL when anonymous
+	VoteID   uint  `gorm:"index"`
+	OptionID uint  `gorm:"index"`
+	UserID   *uint `gorm:"index"` // NULL when anonymous
 }
