@@ -9,9 +9,9 @@ import (
 type Status string
 
 const (
-	Scheduled Status = "scheduled"
-	Ongoing   Status = "ongoing"
-	Completed Status = "completed"
+	EventStatusScheduled Status = "scheduled"
+	EventStatusOngoing   Status = "ongoing"
+	EventStatusCompleted Status = "completed"
 )
 
 type Event struct {

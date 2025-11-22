@@ -1,0 +1,23 @@
+meta {
+  name: new
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{host}}/api/events
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "title": "were demolishin p3",
+    "description": "yes like all of us"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

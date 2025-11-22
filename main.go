@@ -36,6 +36,11 @@ func main() {
 		r.Post("/register", handlers.Register(tokenAuth))
 		r.Post("/refresh", handlers.Refresh(tokenAuth))
 	})
+	r.Route("/api/events", func(r chi.Router) {
+		r.Post("/", handlers.NewEvent)
+		r.Post("/register", handlers.Register(tokenAuth))
+		r.Post("/refresh", handlers.Refresh(tokenAuth))
+	})
 	// protected routes
 	r.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(tokenAuth))

@@ -1,18 +1,18 @@
 meta {
-  name: refresh
+  name: register
   type: http
-  seq: 4
+  seq: 2
 }
 
 post {
-  url: {{host}}/api/auth/refresh
-  body: none
+  url: {{host}}/api/auth/register
+  body: json
   auth: inherit
 }
 
 body:json {
   {
-    "username": "asdnjf",
+    "username": "me",
     "password": "pass"
   }
 }
