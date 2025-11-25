@@ -1,0 +1,12 @@
+* repo structure
+[[https://github.com/vtkitties/rewrite/blob/main/doc.md][read the mvp statement here]]
+
+this project is a monorepo, refer to
+- [[./backend/README.md][backend's readme]]
+- [[./frontend/README.md][frontend's readme]]
+* todos
+** TODO backend [0/2]
+- [ ] an event system
+- [ ] a superuser system
+** TODO frontend [0/1]
+- [ ] `api.ts` file for all api interactions

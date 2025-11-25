@@ -26,6 +26,7 @@ func main() {
 	log.Printf("serving on %v\n", addr)
 	check_die(err)
 	initJWT()
+	orm.InitSuperuser("pebis", gormDB)
 
 	// routing setup
 	r := chi.NewRouter()
@@ -44,6 +45,7 @@ func main() {
 		r.Use(jwtauth.Verifier(tokenAuth))
 		r.Use(jwtauth.Authenticator(tokenAuth))
 
+		r.Post("/admin/new_user", handlers.NewUser)
 		r.Get("/admin", func(w http.ResponseWriter, r *http.Request) {
 			_, claims, _ := jwtauth.FromContext(r.Context())
 			fmt.Fprintf(w, "Hello user %v", claims["user_id"])
