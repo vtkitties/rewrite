@@ -1,9 +1,6 @@
 package orm
 
 import (
-	"kitties/orm"
-	"net/http"
-
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )

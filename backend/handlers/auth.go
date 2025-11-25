@@ -17,8 +17,7 @@ type AuthRequest struct {
 }
 
 type AuthResponse struct {
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token,omitempty"`
+	Token        string `json:"token"`
 }
 
 // POST /api/auth/login
@@ -43,20 +42,19 @@ func Login(tokenAuth *jwtauth.JWTAuth) http.HandlerFunc {
 			return
 		}
 
-		_, accessToken, _ := tokenAuth.Encode(map[string]any{
+		_, token, _ := tokenAuth.Encode(map[string]any{
 			"user_id": user.ID,
 			"exp":     time.Now().Add(7 * (24 * time.Hour)).Unix(),
 		})
 
 		resp := AuthResponse{
-			AccessToken: accessToken,
+			Token: token,
 		}
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(resp)
 	}
 }
-
 
 // POST /api/auth/refresh
 func Refresh(tokenAuth *jwtauth.JWTAuth) http.HandlerFunc {
@@ -69,13 +67,13 @@ func Refresh(tokenAuth *jwtauth.JWTAuth) http.HandlerFunc {
 
 		userID := claims["user_id"]
 
-		_, newAccessToken, _ := tokenAuth.Encode(map[string]any{
+		_, new_token, _ := tokenAuth.Encode(map[string]any{
 			"user_id": userID,
 			"exp":     time.Now().Add(7 * (24 * time.Hour)).Unix(),
 		})
 
 		resp := AuthResponse{
-			AccessToken: newAccessToken,
+			Token: new_token,
 		}
 
 		w.Header().Set("Content-Type", "application/json")

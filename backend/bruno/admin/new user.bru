@@ -1,18 +1,18 @@
 meta {
-  name: login
+  name: new user
   type: http
-  seq: 3
+  seq: 1
 }
 
-get {
-  url: {{host}}/auth/login
+post {
+  url: {{host}}/api/admin/new_user
   body: json
   auth: inherit
 }
 
 body:json {
   {
-    "username": "me",
+    "username": "huj",
     "password": "pass"
   }
 }

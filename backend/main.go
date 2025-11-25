@@ -10,7 +10,6 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/jwtauth/v5"
-	"gorm.io/gorm"
 )
 
 func check_die(err error) {
@@ -31,34 +30,32 @@ func main() {
 	// routing setup
 	r := chi.NewRouter()
 	r.Use(orm.MiddlewareWithDB(gormDB))
+
 	// public auth
-	r.Route("/api/auth", func(r chi.Router) {
-		r.Post("/login", handlers.Login(tokenAuth))
-		r.Post("/refresh", handlers.Refresh(tokenAuth))
-		// r.Post("/register", handlers.Register(tokenAuth))
-	})
-	r.Route("/api/events", func(r chi.Router) {
-		r.Post("/", handlers.NewEvent)
-	})
+	r.Post("/api/auth/login", handlers.Login(tokenAuth))
+
 	// protected routes
-	r.Group(func(r chi.Router) {
+	r.Route("/api", func(r chi.Router) {
 		r.Use(jwtauth.Verifier(tokenAuth))
 		r.Use(jwtauth.Authenticator(tokenAuth))
 
-		r.Post("/admin/new_user", handlers.NewUser)
-		r.Get("/admin", func(w http.ResponseWriter, r *http.Request) {
-			_, claims, _ := jwtauth.FromContext(r.Context())
-			fmt.Fprintf(w, "Hello user %v", claims["user_id"])
+		r.Route("/events", func(r chi.Router) {
+			r.Post("/", handlers.NewEvent)
 		})
-	})
 
-	r.Get("/test", func(w http.ResponseWriter, r *http.Request) {
-		db := r.Context().Value(orm.DBContextKey).(*gorm.DB)
+		r.Route("/auth", func(r chi.Router) {
+			r.Post("/refresh", handlers.Refresh(tokenAuth))
+			// r.Post("/register", handlers.Register(tokenAuth))
+		})
 
-		var count int64
-		db.Raw("SELECT count(*) FROM sqlite_master").Scan(&count)
-
-		fmt.Fprintf(w, "db has %d tables", count)
+		r.Route("/admin", func(r chi.Router) {
+			r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+				_, claims, _ := jwtauth.FromContext(r.Context())
+				fmt.Fprintf(w, "hello, %v\n%v", claims["user_id"], claims)
+			})
+			r.Post("/new_user", handlers.NewUser)
+			// r.Post("/register", handlers.Register(tokenAuth))
+		})
 	})
 
 	http.ListenAndServe(addr, r)

@@ -1,0 +1,28 @@
+meta {
+  name: log in as admin
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{host}}/api/auth/login
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "email": "admin",
+    "password": "pebis"
+  }
+}
+
+script:post-response {
+  let data = res.getBody();
+  bru.setEnvVar("token",data.token);
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
