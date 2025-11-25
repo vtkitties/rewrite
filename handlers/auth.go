@@ -58,32 +58,32 @@ func Login(tokenAuth *jwtauth.JWTAuth) http.HandlerFunc {
 }
 
 // POST /api/auth/register
-func Register(tokenAuth *jwtauth.JWTAuth) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		db := r.Context().Value(orm.DBContextKey).(*gorm.DB)
+// func Register(tokenAuth *jwtauth.JWTAuth) http.HandlerFunc {
+// 	return func(w http.ResponseWriter, r *http.Request) {
+// 		db := r.Context().Value(orm.DBContextKey).(*gorm.DB)
 
-		var req AuthRequest
-		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
-			return
-		}
+// 		var req AuthRequest
+// 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+// 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
+// 			return
+// 		}
 
-		hashed, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
-		if err != nil {
-			http.Error(w, `{"error":"failed to hash password"}`, http.StatusInternalServerError)
-			return
-		}
+// 		hashed, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+// 		if err != nil {
+// 			http.Error(w, `{"error":"failed to hash password"}`, http.StatusInternalServerError)
+// 			return
+// 		}
 
-		user := orm.User{Email: req.Email, Password: string(hashed)}
-		if err := db.Create(&user).Error; err != nil {
-			http.Error(w, `{"error":"email already exists"}`, http.StatusBadRequest)
-			return
-		}
+// 		user := orm.User{Email: req.Email, Password: string(hashed)}
+// 		if err := db.Create(&user).Error; err != nil {
+// 			http.Error(w, `{"error":"email already exists"}`, http.StatusBadRequest)
+// 			return
+// 		}
 
-		w.WriteHeader(http.StatusCreated)
-		w.Write([]byte(`{"message":"user created"}`))
-	}
-}
+// 		w.WriteHeader(http.StatusCreated)
+// 		w.Write([]byte(`{"message":"user created"}`))
+// 	}
+// }
 
 // POST /api/auth/refresh
 func Refresh(tokenAuth *jwtauth.JWTAuth) http.HandlerFunc {
