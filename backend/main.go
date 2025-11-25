@@ -33,8 +33,8 @@ func main() {
 	// public auth
 	r.Route("/api/auth", func(r chi.Router) {
 		r.Post("/login", handlers.Login(tokenAuth))
-		// r.Post("/register", handlers.Register(tokenAuth))
 		r.Post("/refresh", handlers.Refresh(tokenAuth))
+		// r.Post("/register", handlers.Register(tokenAuth))
 	})
 	r.Route("/api/events", func(r chi.Router) {
 		r.Post("/", handlers.NewEvent)
